@@ -244,25 +244,7 @@ class MessageBlocks {
                 COLOR: {
                     items: this._buildMenu(this.COLOR_INFO)
                 }
-            },
-            // Optional: translations
-            translation_map: {
-                cn: {
-                    'extensionName': 'Einige Blöcke',
-                    'myReporter': 'Buchstabe [LETTER_NUM] von [TEXT]',
-                    'myReporter.TEXT_default': 'Text',
-                    'menuA_item1': 'Artikel eins',
-                    // Dynamic menus can be translated too
-                    'menuB_example': 'Beispiel',
-                    // This message contains ICU placeholders (see `myReporter()` below)
-                    'myReporter.result': 'Buchstabe {LETTER_NUM} von {TEXT} ist {LETTER}.'
-                }
-            },
-            // Optional: list new target type(s) provided by this extension.
-            targetTypes: [
-                'wedo2',
-                'speech' // automatically transformed to 'someBlocks.speech'
-            ]
+            }
         };
     }
     linkTip (args) {
@@ -323,13 +305,20 @@ class MessageBlocks {
         postMessage(MessageType.loadNextFile, {});
     }
     waitAudioFinish (res) {
-        return res.TEXT === this.getMessage.value.audioFinished;
+        const rs = res.TEXT === this.getMessage.value.audioFinished;
+        // 获取当前值以后 再设置回默认值 下面同样
+        this.getMessage.value.audioFinished = '';
+        return rs;
     }
     waitAudioStart (res) {
-        return res.TEXT === this.getMessage.value.audioStarted;
+        const rs = res.TEXT === this.getMessage.value.audioStarted;
+        this.getMessage.value.audioStarted = '';
+        return rs;
     }
     teacherContinue () {
-        return this.getMessage.value.continue;
+        const res = this.getMessage.value.continue;
+        this.getMessage.value.continue = false;
+        return res;
     }
 }
 
