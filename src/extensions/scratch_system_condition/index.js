@@ -9,26 +9,16 @@ class Message {
     constructor (runtime) {
         this.runtime = runtime;
         this.value = {
-            audioFinished: '',
-            audioStarted: '',
-            continue: false
+            audio: ''
         };
-        window.addEventListener('message', this.getMessageFromClient.bind(this));
+        window.addEventListener(
+            'message',
+            this.getMessageFromClient.bind(this)
+        );
     }
     getMessageFromClient (event) {
-        if (event.data) {
-            const {value, type} = event.data;
-            switch (type) {
-            case 'FINISH_AUDIO':
-                this.value.audioFinished = value;
-                break;
-            case 'START_AUDIO':
-                this.value.audioStarted = value;
-                break;
-            case 'CONTINUE':
-                this.value.continue = true;
-            }
-        }
+        // TODO: 根据积木类型具体处理
+        this.value.audio = event.data.value;
     }
 }
 class MessageBlocks {
@@ -73,8 +63,9 @@ class MessageBlocks {
         return {
             id: 'systemMessage',
             name: 'Message Blocks',
-            iconURI: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAAAAACyOJm3AAAAFklEQVQYV2P4DwMMEMgAI/+DE' +
-      'UIMBgAEWB7i7uidhAAAAABJRU5ErkJggg==',
+            iconURI:
+                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAAAAACyOJm3AAAAFklEQVQYV2P4DwMMEMgAI/+DE' +
+                'UIMBgAEWB7i7uidhAAAAABJRU5ErkJggg==',
             blocks: [
                 {
                     opcode: 'link-tip',
@@ -211,33 +202,15 @@ class MessageBlocks {
                 },
                 {
                     opcode: 'wait-audio-finish',
-                    text: '播放[TEXT]完成',
+                    text: '播放 [TEXT] 完成',
                     blockType: BlockType.BOOLEAN,
                     arguments: {
                         TEXT: {
                             type: ArgumentType.STRING,
-                            defaultValue: ''
+                            default: '语音id'
                         }
                     },
                     func: 'waitAudioFinish'
-                },
-                {
-                    opcode: 'wait-audio-start',
-                    text: '播放[TEXT]',
-                    blockType: BlockType.BOOLEAN,
-                    arguments: {
-                        TEXT: {
-                            type: ArgumentType.STRING,
-                            defaultValue: ''
-                        }
-                    },
-                    func: 'waitAudioStart'
-                },
-                {
-                    opcode: 'continue',
-                    text: '等待老师继续',
-                    blockType: BlockType.BOOLEAN,
-                    func: 'teacherContinue'
                 }
             ],
             menus: {
@@ -255,7 +228,8 @@ class MessageBlocks {
                     // Dynamic menus can be translated too
                     'menuB_example': 'Beispiel',
                     // This message contains ICU placeholders (see `myReporter()` below)
-                    'myReporter.result': 'Buchstabe {LETTER_NUM} von {TEXT} ist {LETTER}.'
+                    'myReporter.result':
+                        'Buchstabe {LETTER_NUM} von {TEXT} ist {LETTER}.'
                 }
             },
             // Optional: list new target type(s) provided by this extension.
@@ -269,67 +243,73 @@ class MessageBlocks {
         postMessage(MessageType.linkTip, {
             msg: args.TEXT
         });
+        console.log('linkTip', args);
     }
     stepTip (args) {
         postMessage(MessageType.stepTip, {
             msg: args.TEXT
         });
+        console.log('stepTip', args);
     }
     operationTip (args) {
         postMessage(MessageType.operationTip, {
             msg: args.TEXT
         });
+        console.log('operationTip', args);
     }
     outputTip (args) {
         postMessage(MessageType.outputTip, {
             msg: args.TEXT
         });
+        console.log('outputTip', args);
     }
     backlogTip (args) {
         postMessage(MessageType.backlogTip, {
             msg: args.TEXT
         });
+        console.log('backlogTip', args);
     }
     otherTip (args) {
         postMessage(MessageType.otherTip, {
             msg: args.TEXT
         });
+        console.log('otherTip', args);
     }
     statusBarText (args) {
         postMessage(MessageType.statusBarText, {
             msg: args.TEXT
         });
+        console.log('statusBarText', args);
     }
     statusBarPercent (args) {
         postMessage(MessageType.statusBarPercent, {
             msg: args.TEXT
         });
+        console.log('statusBarPercent', args);
     }
     statusBarColor (args) {
         const _colorMap = ['red', 'yellow', 'green'];
         postMessage(MessageType.statusBarColor, {
             msg: _colorMap[args.COLOR + 1]
         });
+        console.log('statusBarColor', args);
     }
     statusBarTimer () {
         postMessage(MessageType.statusBarTimer, {});
+        console.log('statusBarTimer');
     }
     loadFile (args) {
         postMessage(MessageType.loadFile, {
             msg: args.TEXT
         });
+        console.log('loadFile', args);
     }
     loadNextFile () {
         postMessage(MessageType.loadNextFile, {});
+        console.log('loadNextFile');
     }
     waitAudioFinish (res) {
-        return res.TEXT === this.getMessage.value.audioFinished;
-    }
-    waitAudioStart (res) {
-        return res.TEXT === this.getMessage.value.audioStarted;
-    }
-    teacherContinue () {
-        return this.getMessage.value.continue;
+        return res.TEXT === this.getMessage.value.audio;
     }
 }
 
