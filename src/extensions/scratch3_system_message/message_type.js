@@ -9,7 +9,10 @@ const MessageType = {
     statusBarPercent: 'STATUS_BAR_PERCENT',
     statusBarColor: 'STATUS_BAR_COLOR',
     statusBarTimer: 'STATUS_BAR_TIMER',
-    loadFile: 'LOAD_FILE',
-    loadNextFile: 'LOAD_NEXT_FILE'
+    enterStep: 'ENTER_STEP',
+    playAudio: 'PLAY_AUDIO',
+    waitAudioFinish: 'WAIT_AUDIO_FINISH',
+    processBreak: 'PROCESS_BREAK',
+    waitTeacherContinue: 'WAIT_TEACHER_CONTINUE'
 };
 module.exports = MessageType;

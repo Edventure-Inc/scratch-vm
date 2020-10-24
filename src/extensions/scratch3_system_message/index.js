@@ -5,13 +5,13 @@ const formatMessage = require('format-message');
 const MessageType = require('./message_type');
 const postMessage = require('./postMessage');
 
+const handleImageStr = text => text === '预览图片' ? '' : text;
 class Message {
     constructor (runtime) {
         this.runtime = runtime;
         this.value = {
-            audioFinished: '',
-            audioStarted: '',
-            continue: false
+            audioFinished: {},
+            teacherContinue: {}
         };
         window.addEventListener('message', this.getMessageFromClient.bind(this));
     }
@@ -19,14 +19,11 @@ class Message {
         if (event.data) {
             const {value, type} = event.data;
             switch (type) {
-            case 'FINISH_AUDIO':
-                this.value.audioFinished = value;
+            case 'WAIT_AUDIO_FINISH':
+                this.value.audioFinished[value] = true;
                 break;
-            case 'START_AUDIO':
-                this.value.audioStarted = value;
-                break;
-            case 'CONTINUE':
-                this.value.continue = true;
+            case 'WAIT_TEACHER_CONTINUE':
+                this.value.teacherContinue[value] = true;
             }
         }
     }
@@ -48,13 +45,6 @@ class MessageBlocks {
         return [
             {
                 name: formatMessage({
-                    id: 'systemMessage.red',
-                    default: '红色',
-                    description: '状态条的颜色'
-                })
-            },
-            {
-                name: formatMessage({
                     id: 'systemMessage.yellow',
                     default: '黄色',
                     description: '状态条的颜色'
@@ -64,6 +54,41 @@ class MessageBlocks {
                 name: formatMessage({
                     id: 'systemMessage.green',
                     default: '绿色',
+                    description: '状态条的颜色'
+                })
+            },
+            {
+                name: formatMessage({
+                    id: 'systemMessage.red',
+                    default: '红色',
+                    description: '状态条的颜色'
+                })
+            },
+            {
+                name: formatMessage({
+                    id: 'systemMessage.orange',
+                    default: '橙色',
+                    description: '状态条的颜色'
+                })
+            },
+            {
+                name: formatMessage({
+                    id: 'systemMessage.blue',
+                    default: '蓝色',
+                    description: '状态条的颜色'
+                })
+            },
+            {
+                name: formatMessage({
+                    id: 'systemMessage.purple',
+                    default: '紫色',
+                    description: '状态条的颜色'
+                })
+            },
+            {
+                name: formatMessage({
+                    id: 'systemMessage.black',
+                    default: '黑色',
                     description: '状态条的颜色'
                 })
             }
@@ -79,11 +104,15 @@ class MessageBlocks {
                 {
                     opcode: 'link-tip',
                     blockType: BlockType.COMMAND,
-                    text: '环节提示 [TEXT]',
+                    text: '环节提示 [TEXT] [IMAGE]',
                     arguments: {
                         TEXT: {
                             type: ArgumentType.STRING,
                             defaultValue: '提示文本'
+                        },
+                        IMAGE: {
+                            type: ArgumentType.STRING,
+                            defaultValue: '预览图片'
                         }
                     },
                     func: 'linkTip'
@@ -91,11 +120,15 @@ class MessageBlocks {
                 {
                     opcode: 'step-tip',
                     blockType: BlockType.COMMAND,
-                    text: '步骤提示 [TEXT]',
+                    text: '步骤提示 [TEXT] [IMAGE]',
                     arguments: {
                         TEXT: {
                             type: ArgumentType.STRING,
                             defaultValue: '提示文本'
+                        },
+                        IMAGE: {
+                            type: ArgumentType.STRING,
+                            defaultValue: '预览图片'
                         }
                     },
                     func: 'stepTip'
@@ -103,11 +136,15 @@ class MessageBlocks {
                 {
                     opcode: 'operation-tip',
                     blockType: BlockType.COMMAND,
-                    text: '操作提示 [TEXT]',
+                    text: '操作提示 [TEXT] [IMAGE]',
                     arguments: {
                         TEXT: {
                             type: ArgumentType.STRING,
                             defaultValue: '提示文本'
+                        },
+                        IMAGE: {
+                            type: ArgumentType.STRING,
+                            defaultValue: '预览图片'
                         }
                     },
                     func: 'operationTip'
@@ -115,11 +152,15 @@ class MessageBlocks {
                 {
                     opcode: 'output-tip',
                     blockType: BlockType.COMMAND,
-                    text: '输出提示 [TEXT]',
+                    text: '输出提示 [TEXT] [IMAGE]',
                     arguments: {
                         TEXT: {
                             type: ArgumentType.STRING,
                             defaultValue: '提示文本'
+                        },
+                        IMAGE: {
+                            type: ArgumentType.STRING,
+                            defaultValue: '预览图片'
                         }
                     },
                     func: 'outputTip'
@@ -127,11 +168,15 @@ class MessageBlocks {
                 {
                     opcode: 'backlog-tip',
                     blockType: BlockType.COMMAND,
-                    text: '待办提示 [TEXT]',
+                    text: '待办提示 [TEXT] [IMAGE]',
                     arguments: {
                         TEXT: {
                             type: ArgumentType.STRING,
                             defaultValue: '提示文本'
+                        },
+                        IMAGE: {
+                            type: ArgumentType.STRING,
+                            defaultValue: '预览图片'
                         }
                     },
                     func: 'backlogTip'
@@ -139,11 +184,15 @@ class MessageBlocks {
                 {
                     opcode: 'other-tip',
                     blockType: BlockType.COMMAND,
-                    text: '其他提示 [TEXT]',
+                    text: '其他提示 [TEXT] [IMAGE]',
                     arguments: {
                         TEXT: {
                             type: ArgumentType.STRING,
                             defaultValue: '提示文本'
+                        },
+                        IMAGE: {
+                            type: ArgumentType.STRING,
+                            defaultValue: '预览图片'
                         }
                     },
                     func: 'otherTip'
@@ -192,22 +241,28 @@ class MessageBlocks {
                     func: 'statusBarTimer'
                 },
                 {
-                    opcode: 'load-file',
+                    opcode: 'enter-step',
                     blockType: BlockType.COMMAND,
-                    text: '加载课件 [TEXT]',
+                    text: '进入步骤 [TEXT]',
                     arguments: {
                         TEXT: {
                             type: ArgumentType.STRING,
-                            defaultValue: '课件名称'
+                            defaultValue: '步骤ID'
                         }
                     },
-                    func: 'loadFile'
+                    func: 'enterStep'
                 },
                 {
-                    opcode: 'load-next-file',
+                    opcode: 'play-audio',
                     blockType: BlockType.COMMAND,
-                    text: '加载下个课件',
-                    func: 'loadNextFile'
+                    text: '播放预置语音 [TEXT]',
+                    arguments: {
+                        TEXT: {
+                            type: ArgumentType.STRING,
+                            defaultValue: '语音名称/ID'
+                        }
+                    },
+                    func: 'playAudio'
                 },
                 {
                     opcode: 'wait-audio-finish',
@@ -216,28 +271,34 @@ class MessageBlocks {
                     arguments: {
                         TEXT: {
                             type: ArgumentType.STRING,
-                            defaultValue: ''
+                            defaultValue: '语音名称/ID'
                         }
                     },
                     func: 'waitAudioFinish'
                 },
                 {
-                    opcode: 'wait-audio-start',
-                    text: '播放[TEXT]',
+                    opcode: 'process-break',
+                    blockType: BlockType.COMMAND,
+                    text: '阻断流程 [TEXT]',
+                    arguments: {
+                        TEXT: {
+                            type: ArgumentType.STRING,
+                            defaultValue: 'ID'
+                        }
+                    },
+                    func: 'processBreak'
+                },
+                {
+                    opcode: 'wait-teacher-continue',
+                    text: '等待老师继续 [TEXT]',
                     blockType: BlockType.BOOLEAN,
                     arguments: {
                         TEXT: {
                             type: ArgumentType.STRING,
-                            defaultValue: ''
+                            defaultValue: 'ID'
                         }
                     },
-                    func: 'waitAudioStart'
-                },
-                {
-                    opcode: 'continue',
-                    text: '等待老师继续',
-                    blockType: BlockType.BOOLEAN,
-                    func: 'teacherContinue'
+                    func: 'waitTeacherContinue'
                 }
             ],
             menus: {
@@ -249,37 +310,44 @@ class MessageBlocks {
     }
     linkTip (args) {
         postMessage(MessageType.linkTip, {
-            msg: args.TEXT
+            msg: args.TEXT,
+            image: handleImageStr(args.IMAGE)
         });
     }
     stepTip (args) {
         postMessage(MessageType.stepTip, {
-            msg: args.TEXT
+            msg: args.TEXT,
+            image: handleImageStr(args.IMAGE)
         });
     }
     operationTip (args) {
         postMessage(MessageType.operationTip, {
-            msg: args.TEXT
+            msg: args.TEXT,
+            image: handleImageStr(args.IMAGE)
         });
     }
     outputTip (args) {
         postMessage(MessageType.outputTip, {
-            msg: args.TEXT
+            msg: args.TEXT,
+            image: handleImageStr(args.IMAGE)
         });
     }
     backlogTip (args) {
         postMessage(MessageType.backlogTip, {
-            msg: args.TEXT
+            msg: args.TEXT,
+            image: handleImageStr(args.IMAGE)
         });
     }
     otherTip (args) {
         postMessage(MessageType.otherTip, {
-            msg: args.TEXT
+            msg: args.TEXT,
+            image: handleImageStr(args.IMAGE)
         });
     }
     statusBarText (args) {
         postMessage(MessageType.statusBarText, {
-            msg: args.TEXT
+            msg: args.TEXT,
+            image: handleImageStr(args.IMAGE)
         });
     }
     statusBarPercent (args) {
@@ -288,7 +356,7 @@ class MessageBlocks {
         });
     }
     statusBarColor (args) {
-        const _colorMap = ['red', 'yellow', 'green'];
+        const _colorMap = ['yellow', 'green', 'red', 'orange', 'blue', 'purple', 'black'];
         postMessage(MessageType.statusBarColor, {
             msg: _colorMap[args.COLOR + 1]
         });
@@ -296,29 +364,35 @@ class MessageBlocks {
     statusBarTimer () {
         postMessage(MessageType.statusBarTimer, {});
     }
-    loadFile (args) {
-        postMessage(MessageType.loadFile, {
+    enterStep (args) {
+        postMessage(MessageType.enterStep, {
             msg: args.TEXT
         });
     }
-    loadNextFile () {
-        postMessage(MessageType.loadNextFile, {});
+    playAudio (args) {
+        postMessage(MessageType.playAudio, {
+            audio: args.TEXT
+        });
     }
     waitAudioFinish (res) {
-        const rs = res.TEXT === this.getMessage.value.audioFinished;
-        // 获取当前值以后 再设置回默认值 下面同样
-        this.getMessage.value.audioFinished = '';
+        const rs = this.getMessage.value.audioFinished[res.TEXT];
+        // 获取当前值以后 再设置回默认值 避免异常
+        if (rs) {
+            delete this.getMessage.value.audioFinished[res.TEXT];
+        }
         return rs;
     }
-    waitAudioStart (res) {
-        const rs = res.TEXT === this.getMessage.value.audioStarted;
-        this.getMessage.value.audioStarted = '';
-        return rs;
+    processBreak (res) {
+        postMessage(MessageType.processBreak, {
+            operation: res.TEXT
+        });
     }
-    teacherContinue () {
-        const res = this.getMessage.value.continue;
-        this.getMessage.value.continue = false;
-        return res;
+    waitTeacherContinue (res) {
+        const rs = this.getMessage.value.continue[res.TEXT];
+        if (rs) {
+            delete this.getMessage.value.audioFinished[res.TEXT];
+        }
+        return rs;
     }
 }
 
