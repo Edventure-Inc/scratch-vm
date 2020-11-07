@@ -12,6 +12,8 @@ const MessageType = {
     enterStep: 'ENTER_STEP',
     playAudio: 'PLAY_AUDIO',
     waitAudioFinish: 'WAIT_AUDIO_FINISH',
+    waitAudioStart: 'WAIT_AUDIO_START',
+    sendAudio: 'SEND_AUDIO',
     processBreak: 'PROCESS_BREAK',
     waitTeacherContinue: 'WAIT_TEACHER_CONTINUE'
 };

@@ -22,6 +22,9 @@ class Message {
             case 'WAIT_AUDIO_FINISH':
                 this.value.audioFinished[value] = true;
                 break;
+            case 'WAIT_AUDIO_START':
+                this.value.audioStarted[value] = true;
+                break;
             case 'WAIT_TEACHER_CONTINUE':
                 this.value.teacherContinue[value] = true;
             }
@@ -265,6 +268,30 @@ class MessageBlocks {
                     func: 'playAudio'
                 },
                 {
+                    opcode: 'send-audio',
+                    blockType: BlockType.COMMAND,
+                    text: '发送预置语音 [TEXT]',
+                    arguments: {
+                        TEXT: {
+                            type: ArgumentType.STRING,
+                            defaultValue: '语音名称/ID'
+                        }
+                    },
+                    func: 'sendAudio'
+                },
+                {
+                    opcode: 'wait-audio-start',
+                    blockType: BlockType.BOOLEAN,
+                    text: '预置语音 [TEXT]开始播放',
+                    arguments: {
+                        TEXT: {
+                            type: ArgumentType.STRING,
+                            defaultValue: '语音名称/ID'
+                        }
+                    },
+                    func: 'waitAudioStart'
+                },
+                {
                     opcode: 'wait-audio-finish',
                     text: '播放[TEXT]完成',
                     blockType: BlockType.BOOLEAN,
@@ -379,6 +406,19 @@ class MessageBlocks {
         // 获取当前值以后 再设置回默认值 避免异常
         if (rs) {
             delete this.getMessage.value.audioFinished[res.TEXT];
+        }
+        return rs;
+    }
+    sendAudio (args) {
+        postMessage(MessageType.sendAudio, {
+            audio: args.TEXT
+        });
+    }
+    waitAudioStart (res) {
+        const rs = this.getMessage.value.audioStart[res.TEXT];
+        // 获取当前值以后 再设置回默认值 避免异常
+        if (rs) {
+            delete this.getMessage.value.audioStart[res.TEXT];
         }
         return rs;
     }
