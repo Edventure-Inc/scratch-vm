@@ -1,14 +1,9 @@
 {
-  "name": "scratch-vm",
+  "name": "scratch-vm-runkid",
   "version": "0.2.0",
-  "description": "Virtual Machine for Scratch 3.0",
-  "author": "Massachusetts Institute of Technology",
+  "description": "基于Scratch VM二次开发",
+  "author": "",
   "license": "BSD-3-Clause",
-  "homepage": "https://github.com/LLK/scratch-vm#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/LLK/scratch-vm.git"
-  },
   "main": "./dist/node/scratch-vm.js",
   "browser": "./src/index.js",
   "scripts": {
