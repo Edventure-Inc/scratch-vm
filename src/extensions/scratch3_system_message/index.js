@@ -11,7 +11,8 @@ class Message {
         this.runtime = runtime;
         this.value = {
             audioFinished: {},
-            teacherContinue: {}
+            teacherContinue: {},
+            audioStart: {}
         };
         window.addEventListener('message', this.getMessageFromClient.bind(this));
     }
@@ -385,7 +386,7 @@ class MessageBlocks {
     statusBarColor (args) {
         const _colorMap = ['yellow', 'green', 'red', 'orange', 'blue', 'purple', 'black'];
         postMessage(MessageType.statusBarColor, {
-            msg: _colorMap[args.COLOR + 1]
+            msg: _colorMap[Number(args.COLOR) - 1]
         });
     }
     statusBarTimer () {
