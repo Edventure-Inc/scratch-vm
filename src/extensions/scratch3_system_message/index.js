@@ -429,7 +429,7 @@ class MessageBlocks {
         });
     }
     waitTeacherContinue (res) {
-        const rs = this.getMessage.value.continue[res.TEXT];
+        const rs = this.getMessage.value.teacherContinue[res.TEXT];
         if (rs) {
             delete this.getMessage.value.audioFinished[res.TEXT];
         }
