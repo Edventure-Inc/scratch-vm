@@ -257,18 +257,6 @@ class MessageBlocks {
                     func: 'enterStep'
                 },
                 {
-                    opcode: 'play-audio',
-                    blockType: BlockType.COMMAND,
-                    text: '播放预置语音 [TEXT]',
-                    arguments: {
-                        TEXT: {
-                            type: ArgumentType.STRING,
-                            defaultValue: '语音名称/ID'
-                        }
-                    },
-                    func: 'playAudio'
-                },
-                {
                     opcode: 'send-audio',
                     blockType: BlockType.COMMAND,
                     text: '发送预置语音 [TEXT]',
@@ -397,11 +385,6 @@ class MessageBlocks {
             msg: args.TEXT
         });
     }
-    playAudio (args) {
-        postMessage(MessageType.playAudio, {
-            audio: args.TEXT
-        });
-    }
     waitAudioFinish (res) {
         const rs = this.getMessage.value.audioFinished[res.TEXT];
         // 获取当前值以后 再设置回默认值 避免异常
@@ -431,7 +414,7 @@ class MessageBlocks {
     waitTeacherContinue (res) {
         const rs = this.getMessage.value.teacherContinue[res.TEXT];
         if (rs) {
-            delete this.getMessage.value.audioFinished[res.TEXT];
+            delete this.getMessage.value.teacherContinue[res.TEXT];
         }
         return rs;
     }
