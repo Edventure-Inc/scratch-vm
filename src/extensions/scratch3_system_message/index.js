@@ -12,7 +12,7 @@ class Message {
         this.value = {
             audioFinished: {},
             teacherContinue: {},
-            audioStart: {}
+            audioStarted: {}
         };
         window.addEventListener('message', this.getMessageFromClient.bind(this));
     }
@@ -399,10 +399,10 @@ class MessageBlocks {
         });
     }
     waitAudioStart (res) {
-        const rs = this.getMessage.value.audioStart[res.TEXT];
+        const rs = this.getMessage.value.audioStarted[res.TEXT];
         // 获取当前值以后 再设置回默认值 避免异常
         if (rs) {
-            delete this.getMessage.value.audioStart[res.TEXT];
+            delete this.getMessage.value.audioStarted[res.TEXT];
         }
         return rs;
     }
