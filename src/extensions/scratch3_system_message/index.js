@@ -106,6 +106,22 @@ class MessageBlocks {
       'UIMBgAEWB7i7uidhAAAAABJRU5ErkJggg==',
             blocks: [
                 {
+                    opcode: 'event-tracking',
+                    blockType: BlockType.COMMAND,
+                    text: '埋点 [TEXT]',
+                    arguments: {
+                        TEXT: {
+                            type: ArgumentType.STRING,
+                            defaultValue: '埋点内容'
+                        },
+                        IMAGE: {
+                            type: ArgumentType.STRING,
+                            defaultValue: '预览图片'
+                        }
+                    },
+                    func: 'eventTracking'
+                },
+                {
                     opcode: 'link-tip',
                     blockType: BlockType.COMMAND,
                     text: '环节提示 [TEXT] [IMAGE]',
@@ -323,6 +339,11 @@ class MessageBlocks {
                 }
             }
         };
+    }
+    eventTracking (args) {
+        postMessage(MessageType.eventTracking, {
+            msg: args.TEXT
+        });
     }
     linkTip (args) {
         postMessage(MessageType.linkTip, {

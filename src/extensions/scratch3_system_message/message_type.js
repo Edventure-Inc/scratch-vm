@@ -1,4 +1,5 @@
 const MessageType = {
+    eventTracking: 'EVENT_TRACKING',
     linkTip: 'LINK_TIP',
     stepTip: 'STEP_TIP',
     operationTip: 'OPERATION_TIP',
