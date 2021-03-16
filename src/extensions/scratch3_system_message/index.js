@@ -218,6 +218,18 @@ class MessageBlocks {
                     func: 'otherTip'
                 },
                 {
+                    opcode: 'status-bar-preview',
+                    blockType: BlockType.COMMAND,
+                    text: '预览图片 [IMAGE]',
+                    arguments: {
+                        IMAGE: {
+                            type: ArgumentType.STRING,
+                            defaultValue: '预览图片地址'
+                        }
+                    },
+                    func: 'statusBarPreview'
+                },
+                {
                     opcode: 'status-bar-text',
                     blockType: BlockType.COMMAND,
                     text: '状态条文本 [TEXT]',
@@ -385,6 +397,11 @@ class MessageBlocks {
         postMessage(MessageType.statusBarText, {
             msg: args.TEXT,
             image: handleImageStr(args.IMAGE)
+        });
+    }
+    statusBarPreview (args) {
+        postMessage(MessageType.statusBarPreview, {
+            msg: handleImageStr(args.IMAGE)
         });
     }
     statusBarPercent (args) {

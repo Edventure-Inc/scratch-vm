@@ -10,6 +10,7 @@ const MessageType = {
     statusBarPercent: 'STATUS_BAR_PERCENT',
     statusBarColor: 'STATUS_BAR_COLOR',
     statusBarTimer: 'STATUS_BAR_TIMER',
+    statusBarPreview: 'STATUS_BAR_PREVIEW',
     enterStep: 'ENTER_STEP',
     playAudio: 'PLAY_AUDIO',
     waitAudioFinish: 'WAIT_AUDIO_FINISH',
