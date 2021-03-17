@@ -220,8 +220,12 @@ class MessageBlocks {
                 {
                     opcode: 'status-bar-preview',
                     blockType: BlockType.COMMAND,
-                    text: '预览图片 [IMAGE]',
+                    text: '预览图片 [TEXT] [IMAGE]',
                     arguments: {
+                        TEXT: {
+                            type: ArgumentType.STRING,
+                            defaultValue: '预览图片备注'
+                        },
                         IMAGE: {
                             type: ArgumentType.STRING,
                             defaultValue: '预览图片地址'
@@ -401,7 +405,8 @@ class MessageBlocks {
     }
     statusBarPreview (args) {
         postMessage(MessageType.statusBarPreview, {
-            msg: handleImageStr(args.IMAGE)
+            msg: args.TEXT,
+            image: handleImageStr(args.IMAGE)
         });
     }
     statusBarPercent (args) {
